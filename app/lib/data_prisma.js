@@ -1,10 +1,15 @@
+import { unstable_noStore as noCacheStore } from 'next/cache';
 import { PrismaClient } from '@prisma/client';
 import { formatCurrency } from './utils';
+import { unstable_cache, unstable_noStore } from 'next/cache';
 
 const prisma = new PrismaClient();
 
 export async function fetchRevenue() {
+  noCacheStore();
   try {
+    console.log('Fetching revenue data...');
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
     const data = await prisma.revenue.findMany();
     console.log('Data fetch completed after 3 seconds.');
     console.log(data);
@@ -16,6 +21,7 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noCacheStore();
   try {
     const data = await prisma.invoice.findMany({
       select: {
@@ -49,39 +55,8 @@ export async function fetchLatestInvoices() {
   }
 }
 
-// export async function fetchCardData() {
-//   try {
-//     const invoiceCount = await prisma.invoice.count();
-//     const customerCount = await prisma.customer.count();
-//     const invoiceStatus = await prisma.invoice.aggregate({
-//       sum: {
-//         amount: true,
-//       },
-//       where: {
-//         status: {
-//           in: ['paid', 'pending'],
-//         },
-//       },
-//     });
-
-//     const totalPaidInvoices = formatCurrency(invoiceStatus.sum.amount ?? '0');
-//     const totalPendingInvoices = formatCurrency(
-//       invoiceStatus.sum.amount ?? invoiceStatus.sum.amount - totalPaidInvoices,
-//     );
-
-//     return {
-//       numberOfCustomers: customerCount,
-//       numberOfInvoices: invoiceCount,
-//       totalPaidInvoices,
-//       totalPendingInvoices,
-//     };
-//   } catch (error) {
-//     console.error('Database Error:', error);
-//     throw new Error('Failed to fetch card data.');
-//   }
-// }
-
 export async function fetchCardData() {
+  noCacheStore();
   try {
     const invoiceCount = await prisma.invoice.count();
     const customerCount = await prisma.customer.count();
@@ -115,6 +90,7 @@ export async function fetchCardData() {
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(query = '', currentPage = 1) {
+  noCacheStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -156,6 +132,7 @@ export async function fetchFilteredInvoices(query = '', currentPage = 1) {
 }
 
 export async function fetchInvoicesPages(query = '') {
+  noCacheStore();
   try {
     const count = await prisma.invoice.count({
       where: {
@@ -178,6 +155,7 @@ export async function fetchInvoicesPages(query = '') {
 }
 
 export async function fetchInvoiceById(id = '') {
+  noCacheStore();
   try {
     const invoice = await prisma.invoice.findUnique({
       where: {
@@ -197,6 +175,7 @@ export async function fetchInvoiceById(id = '') {
 }
 
 export async function fetchCustomers() {
+  noCacheStore();
   try {
     const customers = await prisma.customer.findMany({
       select: {
@@ -216,6 +195,7 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query = '') {
+  noCacheStore();
   try {
     const customers = await prisma.customer.findMany({
       select: {
@@ -273,6 +253,7 @@ export async function fetchFilteredCustomers(query = '') {
 }
 
 export async function getUser(email = '') {
+  noCacheStore();
   try {
     const user = await prisma.user.findUnique({
       where: {
