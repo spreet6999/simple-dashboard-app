@@ -91,12 +91,14 @@ export async function fetchCardData() {
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(query = '', currentPage = 1) {
   noCacheStore();
+  // console.log('fetchFilteredInvoices params: ', query, currentPage);
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
     const invoices = await prisma.invoice.findMany({
       select: {
         id: true,
+        customerId: true,
         amount: true,
         date: true,
         status: true,
@@ -108,12 +110,25 @@ export async function fetchFilteredInvoices(query = '', currentPage = 1) {
           },
         },
       },
+      // where: {
+      //   OR: [
+      //     { customer: { name: { contains: query } } },
+      //     { customer: { email: { contains: query } } },
+      //     { amount: { contains: query } },
+      //     { date: { contains: query } },
+      //     { status: { contains: query } },
+      //   ],
+      // },
       where: {
         OR: [
-          { customer: { name: { contains: query } } },
-          { customer: { email: { contains: query } } },
-          { amount: { contains: query } },
-          { date: { contains: query } },
+          query
+            ? { customer: { name: { contains: query, mode: 'insensitive' } } }
+            : {},
+          query
+            ? { customer: { email: { contains: query, mode: 'insensitive' } } }
+            : {},
+          // query ? { amount: { contains: query } } : {},
+          // query ? { date: { contains: query } } : {},
           { status: { contains: query } },
         ],
       },
@@ -123,6 +138,11 @@ export async function fetchFilteredInvoices(query = '', currentPage = 1) {
       take: ITEMS_PER_PAGE,
       skip: offset,
     });
+    console.log('FIltered Invoices: ', invoices);
+
+    // invoices.forEach((invoice) => {
+    //   invoice.date = invoice.date.toISOString(); // Convert to ISO string
+    // });
 
     return invoices;
   } catch (error) {
@@ -139,8 +159,8 @@ export async function fetchInvoicesPages(query = '') {
         OR: [
           { customer: { name: { contains: query } } },
           { customer: { email: { contains: query } } },
-          { amount: { contains: query } },
-          { date: { contains: query } },
+          // { amount: { contains: query } },
+          // { date: { contains: query } },
           { status: { contains: query } },
         ],
       },

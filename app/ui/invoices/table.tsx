@@ -2,7 +2,8 @@ import Image from 'next/image';
 import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredInvoices } from '@/app/lib/data';
+import { fetchFilteredInvoices } from '@/app/lib/data_prisma';
+import { Invoice } from '@/app/lib/definitions';
 
 export default async function InvoicesTable({
   query,
@@ -11,7 +12,11 @@ export default async function InvoicesTable({
   query: string;
   currentPage: number;
 }) {
-  const invoices = await fetchFilteredInvoices(query, currentPage);
+  const invoices = (await fetchFilteredInvoices(
+    query,
+    currentPage,
+  )) as Invoice[];
+  // console.log('invoices date', typeof invoices?.[0]?.date);
 
   return (
     <div className="mt-6 flow-root">
@@ -27,15 +32,17 @@ export default async function InvoicesTable({
                   <div>
                     <div className="mb-2 flex items-center">
                       <Image
-                        src={invoice.imageUrl}
+                        src={invoice?.customer.imageUrl}
                         className="mr-2 rounded-full"
                         width={28}
                         height={28}
-                        alt={`${invoice.name}'s profile picture`}
+                        alt={`${invoice?.customer.name}'s profile picture`}
                       />
-                      <p>{invoice.name}</p>
+                      <p>{invoice?.customer.name}</p>
                     </div>
-                    <p className="text-sm text-gray-500">{invoice.email}</p>
+                    <p className="text-sm text-gray-500">
+                      {invoice?.customer.email}
+                    </p>
                   </div>
                   <InvoiceStatus status={invoice.status} />
                 </div>
@@ -86,17 +93,17 @@ export default async function InvoicesTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <Image
-                        src={invoice.imageUrl}
+                        src={invoice?.customer.imageUrl}
                         className="rounded-full"
                         width={28}
                         height={28}
-                        alt={`${invoice.name}'s profile picture`}
+                        alt={`${invoice?.customer.name}'s profile picture`}
                       />
-                      <p>{invoice.name}</p>
+                      <p>{invoice?.customer.name}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {invoice.email}
+                    {invoice?.customer.email}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatCurrency(invoice.amount)}
