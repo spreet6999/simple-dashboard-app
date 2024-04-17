@@ -24,7 +24,7 @@ export type Invoice = {
   // In TypeScript, this is called a string union type.
   // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
   status: 'pending' | 'paid';
-  customer: {
+  customer?: {
     name: string;
     email: string;
     imageUrl: string;
@@ -88,6 +88,7 @@ export type InvoiceForm = {
   customerId: string;
   amount: number;
   status: 'pending' | 'paid';
+  date: Date;
 };
 
 export type DebounceFunction<T extends (...args: any[]) => any> = (

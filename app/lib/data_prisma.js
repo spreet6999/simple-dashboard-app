@@ -1,7 +1,6 @@
 import { unstable_noStore as noCacheStore } from 'next/cache';
 import { PrismaClient } from '@prisma/client';
 import { formatCurrency } from './utils';
-import { unstable_cache, unstable_noStore } from 'next/cache';
 
 const prisma = new PrismaClient();
 
@@ -289,5 +288,43 @@ export async function getUser(email = '') {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch user.');
+  }
+}
+
+//* Create Api:
+export const createInvoiceIntoDB = async (invoice) => {
+  try {
+    const createdInvoice = await prisma.invoice.create({ data: invoice });
+    return createdInvoice;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to create invoice.');
+  }
+}
+
+export const updateInvoiceIntoDB = async (invoice) => {
+  try {
+    const updatedInvoice = await prisma.invoice.update({
+      where: { id: invoice.id },
+      data: {
+        customerId: invoice.customerId,
+        amount: invoice.amount,
+        status: invoice.status,
+      },
+    });
+    return updatedInvoice;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to update invoice.');
+  }
+}
+
+export const deleteInvoiceFromDB = async (id) => {
+  try {
+    const deletedInvoice = await prisma.invoice.delete({ where: { id } });
+    return deletedInvoice;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to delete invoice.');
   }
 }
