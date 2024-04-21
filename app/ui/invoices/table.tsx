@@ -12,10 +12,11 @@ export default async function InvoicesTable({
   query: string;
   currentPage: number;
 }) {
-  const invoices = (await fetchFilteredInvoices(
-    query,
-    currentPage,
-  )) as Invoice[];
+  // const invoices = (await fetchFilteredInvoices(
+  //   query,
+  //   currentPage,
+  // )) as Invoice[];
+  const invoices = await fetchFilteredInvoices(query, currentPage);
   // console.log('invoices date', typeof invoices?.[0]?.date);
 
   return (
