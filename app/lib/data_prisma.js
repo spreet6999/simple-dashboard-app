@@ -182,9 +182,11 @@ export async function fetchInvoiceById(id = '') {
       },
     });
 
-    if (!invoice) {
-      throw new Error('Invoice not found.');
-    }
+    //* Commenting out because it is causing error.tsx to kick-in which catches all type of errors.
+    //* But we want to handle this separately using not-found component instead.
+    // if (!invoice) {
+    //   throw new Error('Invoice not found.');
+    // }
 
     return invoice;
   } catch (error) {
@@ -300,7 +302,7 @@ export const createInvoiceIntoDB = async (invoice) => {
     console.error('Database Error:', error);
     throw new Error('Failed to create invoice.');
   }
-}
+};
 
 export const updateInvoiceIntoDB = async (invoice) => {
   try {
@@ -317,7 +319,7 @@ export const updateInvoiceIntoDB = async (invoice) => {
     console.error('Database Error:', error);
     throw new Error('Failed to update invoice.');
   }
-}
+};
 
 export const deleteInvoiceFromDB = async (id) => {
   try {
@@ -327,4 +329,4 @@ export const deleteInvoiceFromDB = async (id) => {
     console.error('Database Error:', error);
     throw new Error('Failed to delete invoice.');
   }
-}
+};

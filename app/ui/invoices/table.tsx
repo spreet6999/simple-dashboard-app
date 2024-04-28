@@ -3,7 +3,6 @@ import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredInvoices } from '@/app/lib/data_prisma';
-import { Invoice } from '@/app/lib/definitions';
 
 export default async function InvoicesTable({
   query,
